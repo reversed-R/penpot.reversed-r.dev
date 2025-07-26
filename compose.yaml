@@ -1,0 +1,60 @@
+version: "3.8"
+services:
+  penpot-frontend:
+    image: penpotapp/frontend:latest
+    depends_on:
+      - penpot-backend
+      - penpot-exporter
+    volumes:
+      - penpot_assets:/opt/data
+    labels:
+      traefik.enable: "true"
+      traefik.docker.network: "traefik"
+      traefik.http.services.penpot-frontend.loadbalancer.server.scheme: http
+      traefik.http.routers.penpot-frontend.rule: Host(`$(PENPOT_DOMAIN)`)
+      traefik.http.routers.penpot-frontend.entrypoints: websecure,web
+      traefik.http.routers.penpot-frontend.tls.certResolver: leresolver
+      traefik.http.routers.penpot-frontend.service: penpot-frontend
+    networks:
+      - traefik
+
+  penpot-backend:
+    image: penpotapp/backend:latest
+    depends_on:
+      - penpot-postgres
+      - penpot-redis
+    volumes:
+      - penpot_assets:/opt/data
+    environment:
+      - PENPOT_PUBLIC_URI=https://$(PENPOT_DOMAIN)
+      - PENPOT_SECRET_KEY=$(PENPOT_SECRET_KEY)
+      - PENPOT_DATABASE_URI=postgresql://penpot-postgres/penpot
+      - PENPOT_DATABASE_USERNAME=$(PENPOT_DATABASE_USERNAME)
+      - PENPOT_DATABASE_PASSWORD=$(PENPOT_DATABASE_PASSWORD)
+      - PENPOT_FLAGS=$(PENPOT_FLAGS)
+
+  penpot-exporter:
+    image: penpotapp/exporter:latest
+    depends_on:
+      - penpot-redis
+
+  penpot-postgres:
+    image: postgres:16
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=$(POSTGRES_DB)
+      - POSTGRES_USER=$(POSTGRES_USER)
+      - POSTGRES_PASSWORD=$(POSTGRES_PASSWORD)
+
+  penpot-redis:
+    image: redis:7
+
+volumes:
+  postgres:
+  penpot_assets:
+networks:
+  default:
+  traefik:
+    name: traefik
+    external: true
