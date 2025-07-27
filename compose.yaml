@@ -42,7 +42,8 @@ services:
     restart: always
 
   penpot-exporter:
-    image: penpotapp/exporter:latest
+    build:
+      dockerfile: ./exporter.Dockerfile
     depends_on:
       - penpot-redis
     environment:
