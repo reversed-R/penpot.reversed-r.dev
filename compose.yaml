@@ -24,6 +24,7 @@ services:
       penpot-postgres:
         condition: service_healthy
       penpot-redis:
+        condition: service_healthy
     volumes:
       - penpot_assets:/opt/data
     environment:
@@ -55,6 +56,11 @@ services:
 
   penpot-redis:
     image: redis:7
+    healthcheck:
+      test: redis-cli PING
+      interval: 5s
+      timeout: 3s
+      retries: 5
 
 volumes:
   postgres:
