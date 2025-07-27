@@ -34,6 +34,7 @@ services:
       - PENPOT_DATABASE_USERNAME=${POSTGRES_USER}
       - PENPOT_DATABASE_PASSWORD=${POSTGRES_PASSWORD}
       - PENPOT_FLAGS=${PENPOT_FLAGS}
+      - PENPOT_REDIS_URI=redis://penpot-redis/0
 
   penpot-exporter:
     image: penpotapp/exporter:latest
