@@ -16,6 +16,7 @@ services:
       traefik.http.routers.penpot-frontend.tls.certResolver: leresolver
       traefik.http.routers.penpot-frontend.service: penpot-frontend
     networks:
+      - default
       - traefik
 
   penpot-backend:
@@ -35,11 +36,15 @@ services:
       - PENPOT_DATABASE_PASSWORD=${POSTGRES_PASSWORD}
       - PENPOT_FLAGS=${PENPOT_FLAGS}
       - PENPOT_REDIS_URI=redis://penpot-redis/0
+    networks:
+      - default
 
   penpot-exporter:
     image: penpotapp/exporter:latest
     depends_on:
       - penpot-redis
+    networks:
+      - default
 
   penpot-postgres:
     image: postgres:16
@@ -54,6 +59,8 @@ services:
       interval: 5s
       timeout: 3s
       retries: 5
+    networks:
+      - default
 
   penpot-redis:
     image: redis:7
@@ -62,6 +69,8 @@ services:
       interval: 5s
       timeout: 3s
       retries: 5
+    networks:
+      - default
 
 volumes:
   postgres:
