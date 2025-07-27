@@ -18,6 +18,7 @@ services:
     networks:
       - default
       - traefik
+    restart: always
 
   penpot-backend:
     image: penpotapp/backend:latest
@@ -38,6 +39,7 @@ services:
       - PENPOT_REDIS_URI=redis://penpot-redis/0
     networks:
       - default
+    restart: always
 
   penpot-exporter:
     image: penpotapp/exporter:latest
@@ -45,6 +47,7 @@ services:
       - penpot-redis
     networks:
       - default
+    restart: always
 
   penpot-postgres:
     image: postgres:16
@@ -61,6 +64,7 @@ services:
       retries: 5
     networks:
       - default
+    restart: always
 
   penpot-redis:
     image: redis:7
@@ -71,6 +75,7 @@ services:
       retries: 5
     networks:
       - default
+    restart: always
 
 volumes:
   postgres:
