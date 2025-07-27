@@ -21,8 +21,9 @@ services:
   penpot-backend:
     image: penpotapp/backend:latest
     depends_on:
-      - penpot-postgres
-      - penpot-redis
+      penpot-postgres:
+        condition: service_healthy
+      penpot-redis:
     volumes:
       - penpot_assets:/opt/data
     environment:
@@ -46,6 +47,11 @@ services:
       - POSTGRES_DB=$(POSTGRES_DB)
       - POSTGRES_USER=$(POSTGRES_USER)
       - POSTGRES_PASSWORD=$(POSTGRES_PASSWORD)
+    healthcheck:
+      test: pg_isready -U "${POSTGRES_USER}" || exit 1
+      interval: 5s
+      timeout: 3s
+      retries: 5
 
   penpot-redis:
     image: redis:7
