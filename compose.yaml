@@ -45,6 +45,8 @@ services:
     image: penpotapp/exporter:latest
     depends_on:
       - penpot-redis
+    environment:
+      - PENPOT_REDIS_URI=redis://penpot-redis/0
     networks:
       - default
     restart: always
